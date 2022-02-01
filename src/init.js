@@ -4,6 +4,10 @@ import {
 import {
     compileToFunction
 } from './compiler/index'
+import {
+    mountComponent
+} from './lifecycle'
+
 export function initMixin(Vue) {
     // 初始化流程
     Vue.prototype._init = function (options) {
@@ -38,7 +42,9 @@ export function initMixin(Vue) {
             // 将template 转化成render方法  vue2.0 虚拟dom
             // console.log(render)
         }
-        console.log(options.render);
+        // console.log(options.render);
+        // 渲染当前的组件  挂载这个组件 
+        mountComponent(vm, el)
     }
 
 }
