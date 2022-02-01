@@ -1,6 +1,9 @@
 import {
     observe
 } from './observer/index'
+import {
+    proxy
+} from './utils/index'
 export function initState(vm) {
     const opts = vm.$options
     // 属性 方法 数据 计算属性 watch
@@ -45,15 +48,3 @@ function initData(vm) {
 function initComputed(vm) {}
 
 function initWatch(vm) {}
-
-// 数据代理
-function proxy(object, sourceKey, key) {
-    Object.defineProperty(object, key, {
-        get() {
-            return object[sourceKey][key];
-        },
-        set(newValue) {
-            object[sourceKey][key] = newValue;
-        },
-    });
-}

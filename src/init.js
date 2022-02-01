@@ -1,6 +1,9 @@
 import {
     initState
 } from './state'
+import {
+    compileToFunction
+} from './compiler/index'
 export function initMixin(Vue) {
     // 初始化流程
     Vue.prototype._init = function (options) {
@@ -11,5 +14,31 @@ export function initMixin(Vue) {
         // 初始化状态
         initState(vm) // 代码分割
 
+        // 如果用户传入el属性,就需要实现挂载流程
+        if (vm.$options.el) {
+            vm.$mount(vm.$options.el)
+        }
+
     }
+    Vue.prototype.$mount = function (el) {
+        const vm = this
+        const options = vm.$options
+        el = document.querySelector(el)
+        // 默认先查找有没有render函数 没有render会先采用template 如果template也没有就使用el中的内容
+        if (!options.render) { // 对模板进行编译
+            let template = options.template // 取出模板
+            if (!template && el) {
+                // 如果不存在render和template 但是存在el属性 直接将模板赋值到el所在的外层html结构（就是el本身 并不是父元素）
+                template = el.outerHTML
+            }
+            // console.log(template)
+            const render = compileToFunction(template)
+            options.render = render
+
+            // 将template 转化成render方法  vue2.0 虚拟dom
+            // console.log(render)
+        }
+        console.log(options.render);
+    }
+
 }
