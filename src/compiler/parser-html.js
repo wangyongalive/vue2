@@ -1,5 +1,3 @@
-// ?: 匹配不捕获
-// argumens[0] = 匹配到的标签  arguments[1] 匹配到的标签名字
 const ncname = `[a-zA-Z_][\\-\\.0-9_a-zA-Z]*`; // abc-aaa
 const qnameCapture = `((?:${ncname}\\:)?${ncname})`; // <aaa:asdads>
 const startTagOpen = new RegExp(`^<${qnameCapture}`); // 标签开头的正则 捕获的内容是标签名
@@ -8,56 +6,53 @@ const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s
 const startTagClose = /^\s*(\/?)>/; // 匹配标签结束的 >  <div>
 const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g
 
-let root = null; // ast语法树的树根
-let currentParent; // 标识当前父亲是谁
-let stack = []; // 栈结构 来表示开始和结束标签
-const ELEMENT_TYPE = 1; // 元素
-const TEXT_TYPE = 3; // 文本
-
-// 生成ast方法
-function createASTElement(tagName, attrs) {
-    return {
-        tag: tagName,
-        type: ELEMENT_TYPE,
-        children: [],
-        attrs,
-        parent: null
-    }
-}
-
-// 对开始标签进行处理
-function start(tagName, attrs) {
-    // 遇到开始标签 就创建一个ast元素
-    let element = createASTElement(tagName, attrs);
-    if (!root) {
-        root = element;
-    }
-    currentParent = element; // 把当前元素标记成父ast树
-    stack.push(element); // 将开始标签存放到栈中
-}
-// 对结束标签进行处理
-function end(tagName) {
-    let element = stack.pop(); // 拿到的是ast对象
-    // 我要标识当前这个p是属于这个div的儿子的
-    currentParent = stack[stack.length - 1];
-    if (currentParent) {
-        element.parent = currentParent;
-        currentParent.children.push(element); // 实现了一个树的父子关系
-    }
-}
-// 对文本进行处理
-function chars(text) {
-    text = text.replace(/\s/g, '');
-    if (text) {
-        currentParent.children.push({
-            text,
-            type: TEXT_TYPE
-        })
-    }
-}
-
-
 export function parseHTML(html) {
+
+    let root = null; // ast语法树的树根
+    let currentParent; // 标识当前父亲是谁
+    let stack = [];
+    const ELEMENT_TYPE = 1;
+    const TEXT_TYPE = 3;
+
+    function createASTElement(tagName, attrs) {
+        return {
+            tag: tagName,
+            type: ELEMENT_TYPE,
+            children: [],
+            attrs,
+            parent: null
+        }
+    }
+
+    function start(tagName, attrs) {
+        // 遇到开始标签 就创建一个ast元素s
+        let element = createASTElement(tagName, attrs);
+        if (!root) {
+            root = element;
+        }
+        currentParent = element; // 把当前元素标记成父ast树
+        stack.push(element); // 将开始标签存放到栈中
+    }
+
+    function chars(text) {
+        text = text.replace(/\s/g, '');
+        if (text) {
+            currentParent.children.push({
+                text,
+                type: TEXT_TYPE
+            })
+        }
+    }
+
+    function end(tagName) {
+        let element = stack.pop(); // 拿到的是ast对象
+        // 我要标识当前这个p是属于这个div的儿子的
+        currentParent = stack[stack.length - 1];
+        if (currentParent) {
+            element.parent = currentParent;
+            currentParent.children.push(element); // 实现了一个树的父子关系
+        }
+    }
     // 不停的去解析html字符串
     while (html) {
         let textEnd = html.indexOf('<');
@@ -76,7 +71,7 @@ export function parseHTML(html) {
             }
         }
         let text;
-        if (textEnd >= 0) { // 空白字符
+        if (textEnd >= 0) {
             text = html.substring(0, textEnd);
         }
         if (text) {
@@ -112,6 +107,5 @@ export function parseHTML(html) {
             }
         }
     }
-    //   返回生成的ast
     return root;
 }
