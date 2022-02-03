@@ -1,6 +1,7 @@
 export function patch(oldVnode, vnode) {
     console.log(oldVnode, vnode);
 
+    // 判断是更新还是渲染
     const isRealElement = oldVnode.nodeType
     if (isRealElement) {
         const oldElm = oldVnode // div id="app"
@@ -9,6 +10,9 @@ export function patch(oldVnode, vnode) {
         const el = createElm(vnode)
         parentElm.insertBefore(el, oldElm.nextSibling)
         parentElm.removeChild(oldElm)
+
+        // 需要将渲染好的结果返回
+        return el
     }
     // 递归创建真实节点 替换掉老的节点
 }

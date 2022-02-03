@@ -5,19 +5,28 @@ import {
     compileToFunction
 } from './compiler/index'
 import {
-    mountComponent
+    mountComponent,
+    callHook
 } from './lifecycle'
 
+import {
+    mergeOptions
+} from './utils/index';
 export function initMixin(Vue) {
     // 初始化流程
     Vue.prototype._init = function (options) {
         //    数据劫持
         const vm = this
-        vm.$options = options // Vue中使用this.$options指代用户传递的属性
+
+        // 将用户传递的 和 全局的进行一个合并 
+        vm.$options = mergeOptions(vm.constructor.options, options);
+        // vm.$options = options // Vue中使用this.$options指代用户传递的属性
+        callHook(vm, 'beforeCreate')
 
         // 初始化状态
         initState(vm) // 代码分割
 
+        callHook(vm, 'created')
         // 如果用户传入el属性,就需要实现挂载流程
         if (vm.$options.el) {
             vm.$mount(vm.$options.el)

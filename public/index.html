@@ -30,6 +30,18 @@
                     }]
                 }
 
+            },
+            beforeCreate() {
+                console.log('beforeCreate------------', this.age);
+            },
+            created() {
+                console.log('created----------', this.age);
+            },
+            beforeMount() {
+                console.log('beforeMounted---------', this.age);
+            },
+            mounted() {
+                console.log('mounted--------', this.age);
             }
         })
         // vm._data.name = 'yong'
