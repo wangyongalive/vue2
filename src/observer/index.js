@@ -52,6 +52,7 @@ function defineReactive(data, key, value) {
             console.log('Dep.target', Dep.target)
             if (Dep.target) {
                 dep.depend() // 意味着我要将watcher存起来
+                console.log('dep.subs', dep.subs)
             }
             return value
         },

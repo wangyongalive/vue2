@@ -4,8 +4,12 @@ class Dep {
         this.id = id++
         this.subs = [] // age:[watcher, watcher]
     }
+    addSub(watcher) {
+        this.subs.push(watcher) // 观察者模式
+    }
     depend() {
-        this.subs.push(Dep.target) // 观察者模式
+        // 让这个watcher 记住我当前的dep,如果watcher没存过dep ，dep肯定不能存过watcher
+        Dep.target.addDep(this)
     }
     notify() {
         this.subs.forEach(watcher => watcher.update())
