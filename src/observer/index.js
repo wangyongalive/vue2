@@ -7,6 +7,7 @@ import {
 import {
     arrayMethods
 } from './array'
+import Dep from './dep.js';
 class Observer { // 观测值
     constructor(value) {
         // 如果数据的层次过多,需要递归的去解析对象中的属性,依次增加set和get方法
@@ -42,10 +43,16 @@ class Observer { // 观测值
 }
 
 function defineReactive(data, key, value) {
+    let dep = new Dep(); // 这个dep 是为了给对象使用的
     observe(value) // 递归实现深度检测
     // value生成了闭包
     Object.defineProperty(data, key, {
         get() { // 获取值的时候
+            // 每个属性都对应着自己的watcher
+            console.log('Dep.target', Dep.target)
+            if (Dep.target) {
+                dep.depend() // 意味着我要将watcher存起来
+            }
             return value
         },
         set(newValue) {
@@ -54,6 +61,8 @@ function defineReactive(data, key, value) {
             console.log('值发生变化了');
             observe(value) // 继续劫持用户设置的值,因为有可能用户设置的值是一个对象
             value = newValue
+
+            dep.notify() // 通知依赖的watcher来进行一个更新操作
         }
     })
 }
