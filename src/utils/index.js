@@ -39,7 +39,8 @@ let strats = {}
 
 // 生命周期合并策略
 function mergeHook(parentVal, childVal) {
-    // 如果与儿子
+    // 如果有儿子
+    // console.log('mergeHook--------------')
     if (childVal) {
         if (parentVal) {
             // 合并成一个数组
@@ -49,6 +50,7 @@ function mergeHook(parentVal, childVal) {
             return [childVal];
         }
     } else {
+        // console.log('parentVal--------------')
         return parentVal;
     }
 }
@@ -73,7 +75,7 @@ export function mergeOptions(parent, child) {
     }
     // 默认的合并策略 但是有些属性 需要有特殊的合并方式 生命周期的合并
     function mergeField(key) {
-        if (strats[key]) {
+        if (strats[key]) { // 生命周期合并策略
             return options[key] = strats[key](parent[key], child[key])
         }
         if (typeof parent[key] === 'object' && typeof child[key] === 'object') {
@@ -83,7 +85,7 @@ export function mergeOptions(parent, child) {
             }
         } else if (child[key] == null) {
             options[key] = parent[key];
-        } else {
+        } else { // 儿子覆盖父亲
             options[key] = child[key];
         }
     }

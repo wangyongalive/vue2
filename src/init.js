@@ -21,6 +21,7 @@ export function initMixin(Vue) {
         // 将用户传递的 和 全局的进行一个合并 
         vm.$options = mergeOptions(vm.constructor.options, options);
         // vm.$options = options // Vue中使用this.$options指代用户传递的属性
+        console.log('vm.$options', vm.$options)
         callHook(vm, 'beforeCreate')
 
         // 初始化状态

@@ -10,6 +10,7 @@ export function initGlobalAPI(Vue) {
         this.options = mergeOptions(this.options, mixin)
     }
 
+    // 生命周期的合并策略 [beforeCreate, beforeCreate]
     Vue.mixin({
         a: 1,
         beforeCreate() {

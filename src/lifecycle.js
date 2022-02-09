@@ -31,8 +31,9 @@ export function mountComponent(vm, el) {
     callHook(vm, 'mounted')
 }
 
+// 生命周期的调用 发布订阅模式
 export function callHook(vm, hook) {
-    const handlers = vm.$options[hook] // [fn,fn,fn]
+    const handlers = vm.$options[hook] // [fn, fn, fn]
     if (handlers) { // 找到对应的钩子依次执行
         for (let i = 0; i < handlers.length; i++) {
             handlers[i].call(vm)
